@@ -54,3 +54,50 @@ This endpoint registers a new user. It accepts user details including full name,
 }
 ```
 
+## /users/login Endpoint Documentation
+
+### Description
+This endpoint authenticates an existing user. It accepts an email and password, and on successful login returns a token and user data; if validation fails or credentials are invalid, it returns an error status.
+
+### Request
+**Method:** POST  
+**URL:** /users/login  
+
+#### Request Body
+```json
+{
+  "email": "john.doe@example.com",
+  "password": "secret123"
+}
+```
+
+### Responses
+
+##### Success (200)
+```json
+{
+  "token": "jwt-token",
+  "user": {
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "john.doe@example.com"
+    // ... other user data
+  }
+}
+```
+
+##### Error (400 / 401)
+```json
+{
+  "errors": [
+    {
+      "msg": "Validation error message or invalid credentials",
+      "param": "field_name",
+      "location": "body"
+    }
+  ]
+}
+```
+
