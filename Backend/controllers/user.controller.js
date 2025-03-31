@@ -13,7 +13,7 @@ module.exports.registerUser = async (req, res, next) => {
         return res.status(400).json({ errors: errors.array() });
         }
 
-        console.log(req.body);//this is used to log the request body to the console for debugging purposes
+        //console.log(req.body);//this is used to log the request body to the console for debugging purposes
 
         const { fullname, email, password } = req.body;//this is used to get the data from the request body
 
