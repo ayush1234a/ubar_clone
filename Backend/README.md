@@ -101,3 +101,74 @@ This endpoint authenticates an existing user. It accepts an email and password, 
 }
 ```
 
+## /users/profile Endpoint Documentation
+
+### Description
+This endpoint retrieves the profile information of the authenticated user. It requires a valid authentication token.
+
+### Request
+**Method:** GET  
+**URL:** /users/profile
+
+#### Headers
+```json
+{
+  "Authorization": "Bearer jwt-token"
+}
+```
+
+### Responses
+
+##### Success (200)
+```json
+{
+  "user": {
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "john.doe@example.com"
+    // ... other user data
+  }
+}
+```
+
+##### Error (401)
+```json
+{
+  "message": "Unauthorized access"
+}
+```
+
+## /users/logout Endpoint Documentation
+
+### Description
+This endpoint logs out the current user by invalidating their token. It requires a valid authentication token.
+
+### Request
+**Method:** GET  
+**URL:** /users/logout
+
+#### Headers
+```json
+{
+  "Authorization": "Bearer jwt-token"
+}
+```
+
+### Responses
+
+##### Success (200)
+```json
+{
+  "message": "Logged out successfully"
+}
+```
+
+##### Error (401)
+```json
+{
+  "message": "Unauthorized access"
+}
+```
+

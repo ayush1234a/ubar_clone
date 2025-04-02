@@ -6,10 +6,16 @@ const   jwt = require('jsonwebtoken');//this is used to import the jsonwebtoken 
 
 
 module.exports.authUser = async (req, res, next) => {// this is used to export the authUser function
-    const token = req.cookies.token ||req.headers.authorization.split(' ')[1];//this is used to get the token from the request cookies or headers
+    const token = req.cookies.token ||  req.headers.authorization?.split(' ')[1];//this is used to get the token from the request cookies or headers
+    
     if(!token){
         return res.status(401).json({ message: 'Unauthorized' });//this is used to send a response back to the client with the message Unauthorized
      }
+
+     const isBlacklisted = await userModel.findOne({ blacklistedTokens: token });//this is used to check if the token is blacklisted 
+     if(isBlacklisted){
+        return res.status(401).json({ message: 'Unauthorized' });//this is used to send a response back to the client with the message Unauthorized
+     }//this is used to check if the token is blacklisted 
 
      try{
         const decoded = jwt.verify(token, process.env.JWT_SECRET);//this is used to verify

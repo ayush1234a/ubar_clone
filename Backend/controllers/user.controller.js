@@ -3,7 +3,7 @@ const { response } = require('../app');
 const userModel = require('../models/user.model');//this is used to import the user model from the user.model.js file
 const userService = require('../services/user.service');// this is used to import the user service from the user.service.js file
 const { validationResult } = require('express-validator');//this is used to import the validationResult function from the express-validator package
-
+const blackListTokenModel = require('../models/blacklistToken.model');//this is used to import the blacklistedToken model from the blacklistedToken.model.js file 
 
 
 module.exports.registerUser = async (req, res, next) => {
@@ -63,7 +63,12 @@ module.exports.getUserProfile = async (req, res, next) => {
 
 module.exports.logoutUser = async (req, res, next) => {
     res.clearCookie('token');// this is used to clear the cookie with the token in the response
-    res.status(200).json({ message: 'Logged out successfully' });//this is used to send a response back to the client with the message Logged out successfully
-}//this is used to export the logoutUser function so that it can be used in other files
+    const token = req.cookies.token || req.headers.authorization.split(' ')[1];//this is used to get the token from the cookie or the authorization header in the request 
+
+    await blackListTokenModel.create({ token });//this is used to create a new blacklisted token in the database using the blacklisted token model
+
+
+    res.status(200).json({ message: 'Logged out successfully' });//this is used to send a response back to the client with the message Logged out successfully  
+}//this is used to export the logoutUser function so that it can be used in other files 
 
    
