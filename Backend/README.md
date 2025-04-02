@@ -1,69 +1,66 @@
-# /users/register Endpoint Documentation
+# API Endpoints Documentation
 
-## Description
-This endpoint registers a new user. It accepts user details including full name, email, and password. On successful registration, it returns a status code of 201 with a token and user data; if there are validation errors, it returns a status code of 400.
+## Authentication Endpoints
 
-## Request
+### 1. Register User (/users/register)
+
 **Method:** POST  
-**URL:** /users/register  
+**URL:** `/users/register`
+**Authentication:** Not Required
 
-### Request Body
+#### Request Body Fields
+| Field | Type | Required | Validation Rules | Description |
+|-------|------|----------|------------------|-------------|
+| fullname.firstname | String | Yes | Min length: 3 chars | User's first name |
+| fullname.lastname | String | No | Min length: 3 chars if provided | User's last name |
+| email | String | Yes | Valid email format | Must be unique in system |
+| password | String | Yes | Min length: 5 chars | User's password |
+
+#### Sample Request
 ```json
 {
   "fullname": {
     "firstname": "John",
-    "lastname": "Doe" // optional: if not provided, ensure to modify validations as needed
+    "lastname": "Doe"
   },
   "email": "john.doe@example.com",
   "password": "secret123"
 }
 ```
 
-- **fullname.firstname:** Required, at least 3 characters.
-- **fullname.lastname:** Optional (but recommended), at least 3 characters if provided.
-- **email:** Required, must be a valid email address.
-- **password:** Required, at least 5 characters.
+#### Response Codes
+- 201: User created successfully
+- 400: Validation error
+- 409: Email already exists
 
-## Responses
-
-### Success (201)
+#### Sample Success Response (201)
 ```json
 {
-  "token": "jwt-token",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5...",
   "user": {
     "fullname": {
       "firstname": "John",
       "lastname": "Doe"
     },
     "email": "john.doe@example.com",
-    // ... other user data
+    "id": "user_id"
   }
 }
 ```
 
-### Error (400)
-```json
-{
-  "errors": [
-    {
-      "msg": "Validation error message",
-      "param": "field_name",
-      "location": "body"
-    }
-  ]
-}
-```
+### 2. Login User (/users/login)
 
-## /users/login Endpoint Documentation
-
-### Description
-This endpoint authenticates an existing user. It accepts an email and password, and on successful login returns a token and user data; if validation fails or credentials are invalid, it returns an error status.
-
-### Request
 **Method:** POST  
-**URL:** /users/login  
+**URL:** `/users/login`
+**Authentication:** Not Required
 
-#### Request Body
+#### Request Body Fields
+| Field | Type | Required | Validation Rules | Description |
+|-------|------|----------|------------------|-------------|
+| email | String | Yes | Valid email format | Registered email |
+| password | String | Yes | Min length: 5 chars | Account password |
+
+#### Sample Request
 ```json
 {
   "email": "john.doe@example.com",
@@ -71,29 +68,85 @@ This endpoint authenticates an existing user. It accepts an email and password, 
 }
 ```
 
-### Responses
+#### Response Codes
+- 200: Login successful
+- 400: Validation error
+- 401: Invalid credentials
 
-##### Success (200)
+#### Sample Success Response (200)
 ```json
 {
-  "token": "jwt-token",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5...",
   "user": {
     "fullname": {
       "firstname": "John",
       "lastname": "Doe"
     },
-    "email": "john.doe@example.com"
-    // ... other user data
+    "email": "john.doe@example.com",
+    "id": "user_id"
   }
 }
 ```
 
-##### Error (400 / 401)
+### 3. Get User Profile (/users/profile)
+
+**Method:** GET  
+**URL:** `/users/profile`
+**Authentication:** Required
+
+#### Headers
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| Authorization | String | Yes | Format: "Bearer {token}" |
+
+#### Response Codes
+- 200: Profile retrieved successfully
+- 401: Unauthorized/Invalid token
+
+#### Sample Success Response (200)
+```json
+{
+  "user": {
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "john.doe@example.com",
+    "id": "user_id"
+  }
+}
+```
+
+### 4. Logout User (/users/logout)
+
+**Method:** GET  
+**URL:** `/users/logout`
+**Authentication:** Required
+
+#### Headers
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| Authorization | String | Yes | Format: "Bearer {token}" |
+
+#### Response Codes
+- 200: Logout successful
+- 401: Unauthorized/Invalid token
+
+#### Sample Success Response (200)
+```json
+{
+  "message": "Logged out successfully"
+}
+```
+
+### Error Response Format
+All endpoints return errors in the following format:
+
 ```json
 {
   "errors": [
     {
-      "msg": "Validation error message or invalid credentials",
+      "msg": "Error message description",
       "param": "field_name",
       "location": "body"
     }
@@ -101,74 +154,9 @@ This endpoint authenticates an existing user. It accepts an email and password, 
 }
 ```
 
-## /users/profile Endpoint Documentation
-
-### Description
-This endpoint retrieves the profile information of the authenticated user. It requires a valid authentication token.
-
-### Request
-**Method:** GET  
-**URL:** /users/profile
-
-#### Headers
-```json
-{
-  "Authorization": "Bearer jwt-token"
-}
-```
-
-### Responses
-
-##### Success (200)
-```json
-{
-  "user": {
-    "fullname": {
-      "firstname": "John",
-      "lastname": "Doe"
-    },
-    "email": "john.doe@example.com"
-    // ... other user data
-  }
-}
-```
-
-##### Error (401)
-```json
-{
-  "message": "Unauthorized access"
-}
-```
-
-## /users/logout Endpoint Documentation
-
-### Description
-This endpoint logs out the current user by invalidating their token. It requires a valid authentication token.
-
-### Request
-**Method:** GET  
-**URL:** /users/logout
-
-#### Headers
-```json
-{
-  "Authorization": "Bearer jwt-token"
-}
-```
-
-### Responses
-
-##### Success (200)
-```json
-{
-  "message": "Logged out successfully"
-}
-```
-
-##### Error (401)
-```json
-{
-  "message": "Unauthorized access"
-}
-```
+### Authentication Notes
+- Tokens are provided via JWT
+- Tokens must be included in the Authorization header as "Bearer {token}"
+- Tokens are automatically invalidated on logout
+- Invalid tokens will receive a 401 Unauthorized response
 
