@@ -4,6 +4,7 @@ dotenv.config();//this is used to load environment variables from a .env file in
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const cookiePaser = require('cookie-parser');//this is used to import the cookie-parser package for parsing cookies in the request
 const connecToDb= require('./db/db');
 const userRoutes = require('./routes/user.routes');//this is used to import the user routes from the user.routes.js file
 
@@ -15,6 +16,7 @@ connecToDb();//this is used to connect to the database
 app.use(cors());//this is used to enable CORS (Cross-Origin Resource Sharing) for all routes and methods in the application
 app.use(express.json());//this is used to parse incoming JSON requests and make the data available in req.body
 app.use(express.urlencoded({ extended: true }));//this is used to parse incoming requests with urlencoded payloads and make the data available in req.body
+app.use(cookiePaser());//this is used to paese the cookies in the request and make them avialable in req.cookies
 
 
 

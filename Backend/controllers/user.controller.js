@@ -50,5 +50,20 @@ module.exports.loginUser = async (req, res, next) => {
         }
 
         const token = user.generateAuthToken();
+
+        res.cookie('token', token)// this is used to set a cookie with the token in the response
+
         res.status(200).json({ token, user });//this is used to send a response back to the client with the token and user data
 }//this is used to generate a token for the user using the generateAuthToken method from the user model
+
+
+module.exports.getUserProfile = async (req, res, next) => {
+        res.status(200).json({ user: req.user });//this is used to send a response back to the client with the user data
+    }//this is used to export the getUserProfile function so that it can be used in other files
+
+module.exports.logoutUser = async (req, res, next) => {
+    res.clearCookie('token');// this is used to clear the cookie with the token in the response
+    res.status(200).json({ message: 'Logged out successfully' });//this is used to send a response back to the client with the message Logged out successfully
+}//this is used to export the logoutUser function so that it can be used in other files
+
+   

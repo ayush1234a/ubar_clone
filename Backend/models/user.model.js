@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema({
 })//this is used to create a schema for the user model
 
 userSchema.methods.generateAuthToken = function() {
-    const token = jwt.sign({__id: this._id}, process.env.JWT_SECRET);
+    const token = jwt.sign({__id: this._id}, process.env.JWT_SECRET, { expiresIn: '24h' });
     return token;
 }//this is used to generate a token for the user using jwt (JSON Web Token) and sign it with the secret key
 
