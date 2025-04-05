@@ -7,9 +7,10 @@ const app = express();
 const cookiePaser = require('cookie-parser');//this is used to import the cookie-parser package for parsing cookies in the request
 const connecToDb= require('./db/db');
 const userRoutes = require('./routes/user.routes');//this is used to import the user routes from the user.routes.js file
-
+const captainRoutes = require('./routes/captain.routes');//this is used to import the captain routes from the captain.routes.js file
 
 connecToDb();//this is used to connect to the database
+
 
 
 
@@ -24,6 +25,15 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 });//it is temporyr for check setp is complit or not it is an route for home page
 app.use( '/users', userRoutes);//this is used to use the user routes for all routes that start with /user
+
+app.use(express.json());
+app.use('/captains', captainRoutes);//this is used to use the captain routes for all routes that start with /captain
+
+//console.log("Captain routes loaded!"); // Add this to check
+// app.use((req, res, next) => {
+//     console.log(`Incoming Request: ${req.method} ${req.url}`);
+//     next();
+// });
 
 
 module.exports = app;
