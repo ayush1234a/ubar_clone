@@ -2,6 +2,7 @@ const captaincontroller = require('../controllers/captain.controller');//this is
 const express = require('express');
 const router = express.Router();
 const { body } = require('express-validator');
+const authMiddleware = require('../middlewares/auth.middleware');//this is used to import the auth middleware
 
 // router.get("/test", (req, res) => {
 //         res.send("Captain routes are working!");
@@ -20,7 +21,16 @@ router.post('/register', [
         captaincontroller.registerCaptain//this is used to call the registerUser function from the user controller
 )
 
+router.post('/login', [
+        body('email').isEmail().withMessage('Please enter a valid email address'),//this is used to validate the email address
+        body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters long'),//this is used to validate the password
 
+],
+captaincontroller.loginCaptain//this is used to call the loginUser function from the user controller
+
+)       
  
+router.get('/profile', authMiddleware.authcaptain ,captaincontroller.getCaptainProfile)//this is used to call the getUserProfile function from the user controller
+router.get('/logout', authMiddleware.authcaptain,captaincontroller.logoutCaptain)//this is used to call the logoutUser function from the user controller
 
 module.exports = router;

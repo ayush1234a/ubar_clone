@@ -166,74 +166,168 @@ All endpoints return errors in the following format:
 
 **Method:** POST  
 **URL:** `/captain/register`
-**Authentication:** Not Required
 
-#### Request Body Fields
-| Field | Type | Required | Validation Rules | Description |
-|-------|------|----------|------------------|-------------|
-| fullname.firstname | String | Yes | Min length: 3 chars | Captain's first name |
-| fullname.lastname | String | Yes | - | Captain's last name |
-| email | String | Yes | Valid email format | Must be unique in system |
-| password | String | Yes | Min length: 8 chars | Captain's password |
-| vehicle.color | String | Yes | Must be: red, blue, or green | Vehicle color |
-| vehicle.plate | String | Yes | Min length: 3 chars | Vehicle plate number |
-| vehicle.capacity | Number | Yes | Min: 1 | Vehicle passenger capacity |
-| vehicle.vehicleType | String | Yes | Must be: car, bike, or auto | Type of vehicle |
-
-#### Sample Request
+#### Request Body
 ```json
 {
-  "fullname": {
-    "firstname": "John",
-    "lastname": "Doe"
-  },
-  "email": "john.captain@example.com",
-  "password": "secret123",
-  "vehicle": {
-    "color": "red",
-    "plate": "ABC123",
-    "capacity": 4,
-    "vehicleType": "car"
-  }
-}
-```
-
-#### Response Codes
-- 201: Captain registered successfully
-- 400: Validation error
-- 409: Email already exists
-
-#### Sample Success Response (201)
-```json
-{
-  "token": "eyJhbGciOiJIUzI1NiIsInR5...",
-  "captain": {
     "fullname": {
-      "firstname": "John",
-      "lastname": "Doe"
+        "firstname": "John", // Required, minimum 3 characters
+        "lastname": "Doe"    // Required
     },
-    "email": "john.captain@example.com",
+    "email": "john.captain@example.com", // Required, must be unique and valid email format
+    "password": "password123", // Required, minimum 8 characters
     "vehicle": {
-      "color": "red",
-      "plate": "ABC123",
-      "capacity": 4,
-      "vehicleType": "car"
-    },
-    "id": "captain_id"
-  }
+        "color": "red",      // Required, must be one of: red, blue, green
+        "plate": "ABC123",   // Required, minimum 3 characters, must be unique
+        "capacity": 4,       // Required, minimum 1
+        "vehicleType": "car" // Required, must be one of: car, bike, auto
+    }
 }
 ```
 
-#### Sample Error Response (400)
+#### Success Response (201)
 ```json
 {
-  "errors": [
-    {
-      "msg": "Please select a valid color",
-      "param": "vehicle.color",
-      "location": "body"
+    "token": "eyJhbGciOiJIUzI1NiIsInR5...", // JWT token for authentication
+    "captain": {
+        "_id": "captain_id",
+        "fullname": {
+            "firstname": "John",
+            "lastname": "Doe"
+        },
+        "email": "john.captain@example.com",
+        "vehicle": {
+            "color": "red",
+            "plate": "ABC123",
+            "capacity": 4,
+            "vehicleType": "car"
+        },
+        "createdAt": "2023-01-01T00:00:00.000Z",
+        "updatedAt": "2023-01-01T00:00:00.000Z"
     }
-  ]
+}
+```
+
+### 2. Login Captain (/captain/login)
+
+**Method:** POST  
+**URL:** `/captain/login`
+
+#### Request Body
+```json
+{
+    "email": "john.captain@example.com", // Required, valid email format
+    "password": "password123"            // Required, minimum 8 characters
+}
+```
+
+#### Success Response (200)
+```json
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5...", // JWT token stored in cookies also
+    "captain": {
+        "_id": "captain_id",
+        "fullname": {
+            "firstname": "John",
+            "lastname": "Doe"
+        },
+        "email": "john.captain@example.com",
+        "vehicle": {
+            "color": "red",
+            "plate": "ABC123",
+            "capacity": 4,
+            "vehicleType": "car"
+        }
+    }
+}
+```
+
+### 3. Get Captain Profile (/captain/profile)
+
+**Method:** GET  
+**URL:** `/captain/profile`
+
+#### Headers
+```json
+{
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5..." // Required, valid JWT token
+}
+```
+
+#### Success Response (200)
+```json
+{
+    "captain": {
+        "_id": "captain_id",
+        "fullname": {
+            "firstname": "John",
+            "lastname": "Doe"
+        },
+        "email": "john.captain@example.com",
+        "vehicle": {
+            "color": "red",
+            "plate": "ABC123",
+            "capacity": 4,
+            "vehicleType": "car"
+        },
+        "createdAt": "2023-01-01T00:00:00.000Z",
+        "updatedAt": "2023-01-01T00:00:00.000Z"
+    }
+}
+```
+
+### 4. Logout Captain (/captain/logout)
+
+**Method:** GET  
+**URL:** `/captain/logout`
+
+#### Headers
+```json
+{
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5..." // Required, valid JWT token
+}
+```
+
+#### Success Response (200)
+```json
+{
+    "message": "Logged out successfully"
+}
+```
+
+### Error Responses
+
+#### Validation Error (400)
+```json
+{
+    "errors": [
+        {
+            "msg": "Please enter a valid email address",
+            "param": "email",
+            "location": "body"
+        }
+    ]
+}
+```
+
+#### Authentication Error (401)
+```json
+{
+    "message": "Invalid email or password"
+}
+```
+
+#### Authorization Error (401)
+```json
+{
+    "message": "Access denied. No token provided"
+}
+```
+
+#### Duplicate Entry Error (400)
+```json
+{
+    "message": "Captain already exist"
 }
 ```
 

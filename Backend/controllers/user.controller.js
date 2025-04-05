@@ -68,11 +68,11 @@ module.exports.getUserProfile = async (req, res, next) => {
     }//this is used to export the getUserProfile function so that it can be used in other files
 
 module.exports.logoutUser = async (req, res, next) => {
-    res.clearCookie('token');// this is used to clear the cookie with the token in the response
     const token = req.cookies.token || req.headers.authorization.split(' ')[1];//this is used to get the token from the cookie or the authorization header in the request 
-
+    
     await blackListTokenModel.create({ token });//this is used to create a new blacklisted token in the database using the blacklisted token model
-
+    
+    res.clearCookie('token');// this is used to clear the cookie with the token in the response
 
     res.status(200).json({ message: 'Logged out successfully' });//this is used to send a response back to the client with the message Logged out successfully  
 }//this is used to export the logoutUser function so that it can be used in other files 
