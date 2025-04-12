@@ -1,14 +1,12 @@
 const mongoose = require('mongoose');
 
 
-
-
-function connecToDb() {
-    mongoose.connect(process.env.DB_CONNECT,
-       
+function connectToDb() {
+    mongoose.connect(process.env.DB_CONNECT
     ).then(() => {
-            console.log('Connected to DB'); 
-        }).catch(err => console.error(err));//this is used to catch any errors that occur during the connection process
-}//this is used to connect to the database using mongoose
+        console.log('Connected to DB');
+    }).catch(err => console.log(err));
+}
 
-module.exports = connecToDb;//this is used to export the function so that it can be used in other files
+
+module.exports = connectToDb;

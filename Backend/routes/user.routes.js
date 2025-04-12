@@ -1,33 +1,28 @@
 const express = require('express');
 const router = express.Router();
-const { body } = require('express-validator')
-const usercontroller = require('../controllers/user.controller');//this is used to import the user controller from the user.controller.js file
-const authMiddleware = require('../middlewares/auth.middleware');//this is used to import the auth middleware from the auth.middleware.js file
+const { body } = require("express-validator")
+const userController = require('../controllers/user.controller');
+const authMiddleware = require('../middlewares/auth.middleware');
 
-router.post('/register',[
-    body('email').isEmail().withMessage('Please enter a valid email address'),//this is used to validate the email address
 
-    body('fullname.firstname').isLength({ min: 3 }).withMessage('First name must be at least 3 characters long'),//this is used to validate the first name
-
-    // body('fullname.lastname').isLength({ min: 3 }).withMessage('Last name must be at least 3 characters long'),//this is used to validate the last name
-
-    body('password').isLength({ min: 5 }).withMessage('Password must be at least 5 characters long'),//this is used to validate the password
+router.post('/register', [
+    body('email').isEmail().withMessage('Invalid Email'),
+    body('fullname.firstname').isLength({ min: 3 }).withMessage('First name must be at least 3 characters long'),
+    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long')
 ],
-usercontroller.registerUser//this is used to call the registerUser function from the user controller
-
+    userController.registerUser
 )
 
-router.post('/login',[
-    body('email').isEmail().withMessage('Please enter a valid email address'),//this is used to validate the email address
-
-    body('password').isLength({ min: 5 }).withMessage('Password must be at least 5 characters long'),//this is used to validate the password
+router.post('/login', [
+    body('email').isEmail().withMessage('Invalid Email'),
+    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long')
 ],
-    usercontroller.loginUser//this is used to call the loginUser function from the user controller
-)// this is used to call the login function from the user controller
+    userController.loginUser
+)
 
-router.get('/profile',authMiddleware.authUser, usercontroller.getUserProfile)// this is used to call the getUserprofile function from the user controller
+router.get('/profile', authMiddleware.authUser, userController.getUserProfile)
 
-router.get('/logout', authMiddleware.authUser, usercontroller.logoutUser)// this is used to call the logout function from the user controller
+router.get('/logout', authMiddleware.authUser, userController.logoutUser)
 
 
 

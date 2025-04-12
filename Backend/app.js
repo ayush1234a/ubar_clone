@@ -28,6 +28,7 @@ app.use( '/users', userRoutes);//this is used to use the user routes for all rou
 
 app.use(express.json());
 app.use('/captains', captainRoutes);//this is used to use the captain routes for all routes that start with /captain
+app.use('/api', require('./routes/captain.routes'));
 
 //console.log("Captain routes loaded!"); // Add this to check
 // app.use((req, res, next) => {
