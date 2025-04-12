@@ -9,6 +9,7 @@ const CaptainProtectWrapper = ({
 
     const token = localStorage.getItem('token')
     const navigate = useNavigate()
+    // eslint-disable-next-line no-unused-vars
     const { captain, setCaptain } = useContext(CaptainDataContext)
     const [ isLoading, setIsLoading ] = useState(true)
 
