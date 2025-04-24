@@ -1,0 +1,42 @@
+version: '3'
+services:
+  user-service:
+    build: ./user-service
+    ports:
+      - "4001:4001"
+    environment:
+      - DB_CONNECT_USERS=mongodb://mongodb:27017/users
+
+  captain-service:
+    build: ./captain-service
+    ports:
+      - "4002:4002"
+    environment:
+      - DB_CONNECT_CAPTAINS=mongodb://mongodb:27017/captains
+
+  ride-service:
+    build: ./ride-service
+    ports:
+      - "4003:4003"
+    environment:
+      - DB_CONNECT_RIDES=mongodb://mongodb:27017/rides
+
+  maps-service:
+    build: ./maps-service
+    ports:
+      - "4004:4004"
+
+  socket-service:
+    build: ./socket-service
+    ports:
+      - "4005:4005"
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
